@@ -1,0 +1,1508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resume Builder</title>
+  <style>
+    :root {
+      --green: #059669;
+      --green-dark: #047857;
+      --bg: #f3f4f6;
+      --panel: #ffffff;
+      --line: #e5e7eb;
+      --text: #111827;
+      --muted: #6b7280;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .topbar {
+      height: 62px;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 22px;
+      position: sticky;
+      top: 0;
+      z-index: 3;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      color: #0f766e;
+    }
+
+    .brand-mark {
+      width: 24px;
+      height: 24px;
+      border: 2px solid #10b981;
+      border-radius: 40px;
+      position: relative;
+    }
+
+    .brand-mark::before {
+      content: "";
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border: 2px solid #10b981;
+      border-radius: 50%;
+      top: 5px;
+      left: 6px;
+      background: #fff;
+    }
+
+    .steps {
+      display: flex;
+      gap: 28px;
+      align-items: center;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      cursor: pointer;
+    }
+
+    .dot {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 1px solid #d1d5db;
+      display: inline-grid;
+      place-items: center;
+      font-size: 12px;
+      background: #fff;
+    }
+
+    .active .dot {
+      background: #10b981;
+      color: #fff;
+      border-color: #10b981;
+    }
+
+    .download-btn {
+      border: 0;
+      background: var(--green);
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 220px minmax(360px, 1fr) 420px;
+      gap: 16px;
+      padding: 16px;
+      max-width: 1450px;
+      margin: 0 auto;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+    }
+
+    .left-panel {
+      padding: 12px;
+      position: sticky;
+      top: 80px;
+    }
+
+    .left-title {
+      font-weight: 700;
+      margin: 4px 0 12px;
+    }
+
+    .section-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .section-item.active {
+      border-color: #86efac;
+      background: #ecfdf5;
+      color: #065f46;
+      font-weight: 600;
+    }
+
+    .badge {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 1px solid #bbf7d0;
+      display: inline-grid;
+      place-items: center;
+      font-size: 11px;
+      color: #059669;
+      background: #f0fdf4;
+    }
+
+    .add-section {
+      width: 100%;
+      margin-top: 8px;
+      border: 1px solid #86efac;
+      border-radius: 8px;
+      padding: 10px;
+      color: #047857;
+      background: #f0fdf4;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .form-panel {
+      padding: 16px;
+      min-height: 600px;
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    .layout-note {
+      border: 1px dashed #86efac;
+      background: #f0fdf4;
+      color: #065f46;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+
+    .custom-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .swatches {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .swatch {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 2px solid #e5e7eb;
+      cursor: pointer;
+    }
+
+    .swatch.active {
+      border-color: #111827;
+    }
+
+    .final-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .final-status {
+      margin-top: 8px;
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .panel-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .panel-head h2 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    .sub {
+      color: var(--muted);
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    .toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: #374151;
+    }
+
+    .toggle input {
+      accent-color: #10b981;
+      width: 36px;
+      height: 20px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 96px 1fr;
+      gap: 14px;
+    }
+
+    .photo-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .avatar {
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #e5e7eb;
+      background: #d1d5db;
+    }
+
+    .change-photo {
+      border: 1px solid #d1d5db;
+      padding: 8px 10px;
+      border-radius: 7px;
+      font-size: 13px;
+      cursor: pointer;
+      background: #fff;
+    }
+
+    .fields {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: #374151;
+      margin-bottom: 5px;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      padding: 10px;
+      font-size: 14px;
+      background: #fff;
+      color: #111827;
+    }
+
+    textarea {
+      min-height: 95px;
+      resize: vertical;
+    }
+
+    .editor-box {
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      padding: 10px;
+      background: #f9fafb;
+    }
+
+    .editor-row {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .editor-row.two {
+      grid-template-columns: 1fr 90px auto auto;
+    }
+
+    .editor-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .mini-btn {
+      border: 1px solid #d1d5db;
+      background: #fff;
+      color: #111827;
+      border-radius: 6px;
+      padding: 7px 9px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .mini-btn.danger {
+      color: #b91c1c;
+      border-color: #fecaca;
+      background: #fef2f2;
+    }
+
+    .editor-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 7px;
+      font-size: 12px;
+      color: #4b5563;
+      font-weight: 600;
+    }
+
+    .exp-points {
+      margin-bottom: 8px;
+    }
+
+    .exp-points textarea {
+      min-height: 72px;
+      font-size: 12px;
+    }
+
+    .form-actions {
+      margin-top: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .ghost-btn {
+      border: 1px solid #d1d5db;
+      padding: 9px 16px;
+      border-radius: 6px;
+      background: #fff;
+      cursor: pointer;
+    }
+
+    .primary-btn {
+      border: 0;
+      background: var(--green);
+      color: #fff;
+      border-radius: 6px;
+      padding: 10px 18px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .preview-wrap {
+      position: sticky;
+      top: 80px;
+      padding: 14px;
+    }
+
+    .preview {
+      width: 100%;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07);
+    }
+
+    .resume {
+      display: grid;
+      grid-template-columns: 38% 62%;
+      min-height: 690px;
+      font-family: var(--resume-font, "Segoe UI", Tahoma, Geneva, Verdana, sans-serif);
+    }
+
+    .side {
+      background: #f8fafc;
+      border-right: 1px solid #e5e7eb;
+      padding: 18px 14px;
+    }
+
+    .main {
+      padding: 18px 16px;
+    }
+
+    .name {
+      font-size: 28px;
+      font-weight: 700;
+      margin: 0;
+      line-height: 1.1;
+    }
+
+    .title {
+      color: var(--accent-color, var(--green-dark));
+      font-weight: 600;
+      margin: 4px 0 10px;
+    }
+
+    .tiny {
+      font-size: 12px;
+      color: #374151;
+      margin: 4px 0;
+      word-break: break-word;
+    }
+
+    .resume-avatar {
+      width: 92px;
+      height: 92px;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+      margin-bottom: 12px;
+      border: 3px solid #d1d5db;
+      background: #d1d5db;
+    }
+
+    .r-section {
+      margin-top: 16px;
+    }
+
+    .r-heading {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent-color, #065f46);
+      border-bottom: 1px solid color-mix(in srgb, var(--accent-color, #86efac) 45%, white);
+      padding-bottom: 4px;
+      margin: 0 0 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .r-text {
+      font-size: 12px;
+      line-height: 1.55;
+      margin: 0;
+      color: #1f2937;
+    }
+
+    .chip-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .chip {
+      border: 1px solid #d1d5db;
+      border-radius: 4px;
+      padding: 3px 6px;
+      font-size: 11px;
+      color: #1f2937;
+      background: #fff;
+    }
+
+    .lang-row {
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 7px;
+      align-items: center;
+    }
+
+    .dots {
+      display: flex;
+      gap: 4px;
+    }
+
+    .dots span {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-color, #10b981);
+      display: block;
+    }
+
+    .dots span.off {
+      background: #d1d5db;
+    }
+
+    .exp-item {
+      margin-bottom: 11px;
+    }
+
+    .exp-role {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .exp-meta {
+      font-size: 11px;
+      color: #6b7280;
+      margin-bottom: 4px;
+    }
+
+    .exp-item ul {
+      margin: 0;
+      padding-left: 16px;
+      font-size: 12px;
+      line-height: 1.45;
+      color: #1f2937;
+    }
+
+    .resume.template-modern {
+      grid-template-columns: 34% 66%;
+    }
+
+    .resume.template-modern .side {
+      background: linear-gradient(180deg, color-mix(in srgb, var(--accent-color, #059669) 12%, white), #ffffff);
+    }
+
+    .resume.template-modern .name {
+      letter-spacing: 0.3px;
+    }
+
+    .resume.template-minimal {
+      grid-template-columns: 1fr;
+    }
+
+    .resume.template-minimal .side {
+      border-right: 0;
+      border-bottom: 1px solid #e5e7eb;
+      padding-bottom: 10px;
+    }
+
+    .resume.template-minimal .resume-avatar {
+      width: 72px;
+      height: 72px;
+    }
+
+    .resume.template-minimal .main {
+      padding-top: 12px;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(0, 0, 0, 0.45);
+    }
+
+    .modal.open {
+      display: flex;
+    }
+
+    .modal-card {
+      width: min(760px, 100%);
+      background: #fff;
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.25);
+      padding: 14px;
+    }
+
+    .modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .modal-head h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .template-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 10px;
+    }
+
+    .template-item {
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      padding: 10px;
+      cursor: pointer;
+      background: #fff;
+      text-align: left;
+    }
+
+    .template-item.active {
+      border-color: var(--accent-color, #059669);
+      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent-color, #059669) 45%, white);
+      background: color-mix(in srgb, var(--accent-color, #059669) 8%, white);
+    }
+
+    .template-item strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+
+    .template-item span {
+      font-size: 12px;
+      color: #4b5563;
+      line-height: 1.45;
+    }
+
+    @media (max-width: 1280px) {
+      .layout {
+        grid-template-columns: 210px 1fr;
+      }
+
+      .preview-wrap {
+        grid-column: span 2;
+        position: static;
+      }
+    }
+
+    @media (max-width: 880px) {
+      .topbar {
+        height: auto;
+        padding: 12px;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .steps {
+        order: 3;
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .left-panel,
+      .preview-wrap {
+        position: static;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .row {
+        grid-template-columns: 1fr;
+      }
+
+      .resume {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark"></span>
+      <span>Enhancv</span>
+    </div>
+
+    <div class="steps" id="stepper">
+      <div class="step active" data-step="1"><span class="dot">1</span> Layout</div>
+      <div class="step" data-step="2"><span class="dot">2</span> Content</div>
+      <div class="step" data-step="3"><span class="dot">3</span> Customize</div>
+      <div class="step" data-step="4"><span class="dot">4</span> Final</div>
+    </div>
+
+    <div class="topbar-actions">
+      <button class="ghost-btn" id="openTemplateModalBtn" type="button">Templates: <span id="activeTemplateLabel">Classic</span></button>
+      <button class="download-btn" id="downloadTopBtn" type="button">Download</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="panel left-panel">
+      <div class="left-title">Resume Sections</div>
+      <div class="section-item active"><span>Personal Info</span> <span class="badge">✓</span></div>
+      <div class="section-item"><span>Experience</span> <span class="badge">✓</span></div>
+      <div class="section-item"><span>Education</span> <span class="badge">✓</span></div>
+      <div class="section-item"><span>Skills</span> <span class="badge">✓</span></div>
+      <div class="section-item"><span>Projects</span> <span class="badge">✓</span></div>
+      <div class="section-item"><span>Certifications</span> <span class="badge">✓</span></div>
+      <div class="section-item"><span>Languages</span> <span class="badge">✓</span></div>
+      <div class="section-item"><span>Interests</span> <span class="badge">✓</span></div>
+      <button class="add-section" type="button">+ Add Section</button>
+    </aside>
+
+    <section class="panel form-panel">
+      <div class="page active" data-page="1">
+        <div class="panel-head">
+          <div>
+            <h2>Layout</h2>
+            <div class="sub">Choose the flow and continue to content editing</div>
+          </div>
+        </div>
+        <div class="layout-note">
+          Your resume builder now has 4 dynamic steps: Layout, Content, Customize, and Final.
+          Use Next to move through the flow, or click any step at the top.
+        </div>
+        <div class="layout-note">
+          The right panel stays live so every change is immediately visible before final export.
+        </div>
+      </div>
+
+      <div class="page" data-page="2">
+      <div class="panel-head">
+        <div>
+          <h2>Personal Information</h2>
+          <div class="sub">Add your personal details</div>
+        </div>
+        <label class="toggle">Photo <input id="photoToggle" type="checkbox" checked /></label>
+      </div>
+
+      <div class="form-grid">
+        <div class="photo-box">
+          <img class="avatar" id="formAvatar" alt="Profile photo" />
+          <label class="change-photo" for="photoUpload">Change Photo</label>
+          <input id="photoUpload" type="file" accept="image/*" hidden />
+        </div>
+
+        <div class="fields">
+          <div>
+            <label for="fullName">Full Name</label>
+            <input id="fullName" value="ROHIT KUMAR" />
+          </div>
+          <div>
+            <label for="jobTitle">Job Title</label>
+            <input id="jobTitle" value="Full Stack Developer" />
+          </div>
+          <div>
+            <label for="email">Email</label>
+            <input id="email" value="rohikumar@example.com" />
+          </div>
+          <div class="row">
+            <div>
+              <label for="phone">Phone</label>
+              <input id="phone" value="+91 98765 43210" />
+            </div>
+            <div>
+              <label for="location">Location</label>
+              <input id="location" value="Jaipur, Rajasthan, India" />
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <label for="linkedin">LinkedIn</label>
+              <input id="linkedin" value="linkedin.com/in/rohikumar" />
+            </div>
+            <div>
+              <label for="website">Website</label>
+              <input id="website" value="rohikumar.dev" />
+            </div>
+          </div>
+          <div>
+            <label for="summary">Summary</label>
+            <textarea id="summary">Passionate Full Stack Developer with 4+ years of experience building scalable web applications. Proficient in Laravel, PHP, JavaScript, Vue.js, and MySQL. Strong problem-solving skills and a keen eye for detail.</textarea>
+          </div>
+          <div>
+            <label>Skills</label>
+            <div class="editor-box">
+              <div class="editor-header"><span>Edit your skills</span><button class="mini-btn" id="addSkillBtn" type="button">+ Add Skill</button></div>
+              <div id="skillsEditor"></div>
+            </div>
+          </div>
+          <div>
+            <label>Languages</label>
+            <div class="editor-box">
+              <div class="editor-header"><span>Name + Level</span><button class="mini-btn" id="addLanguageBtn" type="button">+ Add Language</button></div>
+              <div id="languagesEditor"></div>
+            </div>
+          </div>
+          <div>
+            <label>Experience</label>
+            <div class="editor-box">
+              <div class="editor-header"><span>Role, company, duration/location and points</span><button class="mini-btn" id="addExperienceBtn" type="button">+ Add Experience</button></div>
+              <div id="experienceEditor"></div>
+            </div>
+          </div>
+          <div>
+            <label>Projects</label>
+            <div class="editor-box">
+              <div class="editor-header"><span>Project name and description</span><button class="mini-btn" id="addProjectBtn" type="button">+ Add Project</button></div>
+              <div id="projectsEditor"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
+
+      <div class="page" data-page="3">
+        <div class="panel-head">
+          <div>
+            <h2>Customize</h2>
+            <div class="sub">Theme, font, spacing and section visibility</div>
+          </div>
+        </div>
+        <div class="custom-grid">
+          <div>
+            <label>Theme Color</label>
+            <div class="swatches" id="themeSwatches"></div>
+          </div>
+          <div>
+            <label for="fontSelect">Font Family</label>
+            <select id="fontSelect">
+              <option value="Segoe UI, Tahoma, Geneva, Verdana, sans-serif">Default</option>
+              <option value="Arial, Helvetica, sans-serif">Arial</option>
+              <option value="'Times New Roman', Times, serif">Times New Roman</option>
+              <option value="'Trebuchet MS', sans-serif">Trebuchet</option>
+              <option value="Georgia, serif">Georgia</option>
+            </select>
+          </div>
+          <div>
+            <label for="fontSizeRange">Base Font Size</label>
+            <input id="fontSizeRange" type="range" min="11" max="16" value="12" />
+          </div>
+          <div>
+            <label for="lineHeightRange">Line Height</label>
+            <input id="lineHeightRange" type="range" min="1.2" max="2" step="0.05" value="1.55" />
+          </div>
+          <div>
+            <label><input id="toggleSummary" type="checkbox" checked /> Show Summary</label>
+            <label><input id="toggleProjects" type="checkbox" checked /> Show Projects</label>
+          </div>
+          <div>
+            <label><input id="toggleExperience" type="checkbox" checked /> Show Experience</label>
+            <label><input id="toggleLanguages" type="checkbox" checked /> Show Languages</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="page" data-page="4">
+        <div class="panel-head">
+          <div>
+            <h2>Final</h2>
+            <div class="sub">Review and export your resume</div>
+          </div>
+        </div>
+        <div class="layout-note">
+          Review your resume on the right. When ready, click Print/Save PDF or Download JSON backup.
+        </div>
+        <div class="final-actions">
+          <button class="primary-btn" id="printBtn" type="button">Print / Save PDF</button>
+          <button class="ghost-btn" id="downloadJsonBtn" type="button">Download JSON</button>
+          <button class="ghost-btn" id="importJsonBtn" type="button">Import JSON</button>
+          <button class="ghost-btn" id="resetBtn" type="button">Reset Data</button>
+          <input id="importJsonInput" type="file" accept="application/json" hidden />
+        </div>
+        <div class="final-status" id="importStatus">No import yet.</div>
+      </div>
+
+      <div class="form-actions">
+        <button class="ghost-btn" id="backBtn" type="button">Back</button>
+        <button class="primary-btn" id="nextBtn" type="button">Save &amp; Next</button>
+      </div>
+    </section>
+
+    <aside class="preview-wrap">
+      <div class="preview">
+        <article class="resume">
+          <section class="side">
+            <img class="resume-avatar" id="resumeAvatar" alt="Profile photo" />
+
+            <div class="r-section">
+              <h3 class="r-heading">Education</h3>
+              <p class="r-text">
+                <strong>Bachelor of Technology</strong><br />
+                in Computer Science<br />
+                University of Rajasthan<br />
+                2016 - 2020 | Jaipur, India
+              </p>
+            </div>
+
+            <div class="r-section">
+              <h3 class="r-heading">Skills</h3>
+              <div class="chip-wrap" id="skillsWrap"></div>
+            </div>
+
+            <div class="r-section" id="languagesSection">
+              <h3 class="r-heading">Languages</h3>
+              <div id="languagesWrap"></div>
+            </div>
+          </section>
+
+          <section class="main">
+            <h1 class="name" id="pName">ROHIT KUMAR</h1>
+            <div class="title" id="pTitle">Full Stack Developer</div>
+            <div class="tiny" id="pEmail">rohikumar@example.com</div>
+            <div class="tiny" id="pPhone">+91 98765 43210</div>
+            <div class="tiny" id="pLocation">Jaipur, Rajasthan, India</div>
+            <div class="tiny" id="pLinkedin">linkedin.com/in/rohikumar</div>
+            <div class="tiny" id="pWebsite">rohikumar.dev</div>
+
+            <div class="r-section" id="summarySection">
+              <h3 class="r-heading">Summary</h3>
+              <p class="r-text" id="pSummary"></p>
+            </div>
+
+            <div class="r-section" id="experienceSection">
+              <h3 class="r-heading">Experience</h3>
+              <div id="experienceWrap"></div>
+            </div>
+
+            <div class="r-section" id="projectsSection">
+              <h3 class="r-heading">Projects</h3>
+              <div id="projectsWrap"></div>
+            </div>
+          </section>
+        </article>
+      </div>
+    </aside>
+  </main>
+
+  <div class="modal" id="templateModal" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="templateModalTitle">
+      <div class="modal-head">
+        <h3 id="templateModalTitle">Select Resume Template</h3>
+        <button class="ghost-btn" id="closeTemplateModalBtn" type="button">Close</button>
+      </div>
+      <div class="template-grid" id="templateGrid"></div>
+    </div>
+  </div>
+
+  <script>
+    const defaultAvatar =
+      "data:image/svg+xml;utf8," +
+      encodeURIComponent(
+        "<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><rect width='100%' height='100%' fill='%23d1d5db'/><circle cx='80' cy='62' r='28' fill='%239ca3af'/><rect x='36' y='98' width='88' height='42' rx='21' fill='%239ca3af'/></svg>"
+      );
+
+    const byId = (id) => document.getElementById(id);
+    const root = document.documentElement;
+
+    const baseState = {
+      currentStep: 1,
+      fullName: byId("fullName").value,
+      jobTitle: byId("jobTitle").value,
+      email: byId("email").value,
+      phone: byId("phone").value,
+      location: byId("location").value,
+      linkedin: byId("linkedin").value,
+      website: byId("website").value,
+      summary: byId("summary").value,
+      skills: ["PHP", "Laravel", "JavaScript", "Vue.js", "MySQL", "HTML", "CSS", "Bootstrap", "Git", "API Development"],
+      languages: [
+        { name: "English", level: 4 },
+        { name: "Hindi", level: 4 },
+      ],
+      experience: [
+        {
+          role: "Full Stack Developer",
+          company: "Tech Solutions Pvt. Ltd.",
+          meta: "Jan 2022 - Present | Jaipur, India",
+          points: [
+            "Developed and maintained scalable web applications using Laravel and Vue.js.",
+            "Integrated RESTful APIs and third-party services.",
+            "Improved application performance and optimized database queries.",
+          ],
+        },
+        {
+          role: "Web Developer",
+          company: "Digital Web Agency",
+          meta: "Jun 2020 - Dec 2021 | Jaipur, India",
+          points: [
+            "Built responsive websites using HTML, CSS, JavaScript, and PHP.",
+            "Worked on custom CMS and e-commerce projects.",
+            "Collaborated with designers and stakeholders.",
+          ],
+        },
+      ],
+      projects: [
+        { name: "Task Management System", desc: "A complete task management application built with Laravel, Vue.js, and MySQL." },
+        { name: "E-Commerce Website", desc: "A fully functional e-commerce platform with payment gateway integration." },
+      ],
+      showPhoto: true,
+      photoSrc: defaultAvatar,
+      accentColor: "#059669",
+      fontFamily: "Segoe UI, Tahoma, Geneva, Verdana, sans-serif",
+      baseFontSize: 12,
+      lineHeight: 1.55,
+      selectedTemplate: "classic",
+      showSummary: true,
+      showExperience: true,
+      showProjects: true,
+      showLanguages: true,
+      lastImportedAt: "",
+    };
+
+    const state = { ...baseState, ...(JSON.parse(localStorage.getItem("resumeBuilderState") || "{}")) };
+    const themeColors = ["#059669", "#0f766e", "#1d4ed8", "#7c3aed", "#be123c", "#111827"];
+    const templates = [
+      { id: "classic", label: "Classic", note: "Two-column professional layout." },
+      { id: "modern", label: "Modern", note: "Cleaner spacing with soft accent panel." },
+      { id: "minimal", label: "Minimal", note: "Single-column compact, simple style." },
+    ];
+
+    function sanitizeState() {
+      if (!Array.isArray(state.skills)) state.skills = [];
+      if (!Array.isArray(state.languages)) state.languages = [];
+      if (!Array.isArray(state.experience)) state.experience = [];
+      if (!Array.isArray(state.projects)) state.projects = [];
+      if (![1, 2, 3, 4].includes(Number(state.currentStep))) state.currentStep = 1;
+      if (!templates.some((template) => template.id === state.selectedTemplate)) state.selectedTemplate = baseState.selectedTemplate;
+    }
+
+    function hydrateForm() {
+      ["fullName", "jobTitle", "email", "phone", "location", "linkedin", "website", "summary"].forEach((id) => {
+        if (byId(id)) byId(id).value = state[id] || "";
+      });
+      byId("photoToggle").checked = !!state.showPhoto;
+
+      byId("fontSelect").value = state.fontFamily || baseState.fontFamily;
+      byId("fontSizeRange").value = Number(state.baseFontSize || baseState.baseFontSize);
+      byId("lineHeightRange").value = Number(state.lineHeight || baseState.lineHeight);
+      byId("toggleSummary").checked = !!state.showSummary;
+      byId("toggleExperience").checked = !!state.showExperience;
+      byId("toggleProjects").checked = !!state.showProjects;
+      byId("toggleLanguages").checked = !!state.showLanguages;
+    }
+
+    function saveState() {
+      localStorage.setItem("resumeBuilderState", JSON.stringify(state));
+    }
+
+    function escapeText(value) {
+      return String(value || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+
+    function renderSwatches() {
+      byId("themeSwatches").innerHTML = themeColors
+        .map(
+          (color) =>
+            `<button class="swatch ${state.accentColor === color ? "active" : ""}" type="button" data-accent="${color}" style="background:${color}" aria-label="Theme ${color}"></button>`
+        )
+        .join("");
+    }
+
+    function renderImportStatus() {
+      byId("importStatus").textContent = state.lastImportedAt ? `Last imported: ${state.lastImportedAt}` : "No import yet.";
+    }
+
+    function renderTemplateModal() {
+      byId("templateGrid").innerHTML = templates
+        .map(
+          (template) => `
+            <button class="template-item ${state.selectedTemplate === template.id ? "active" : ""}" type="button" data-template="${template.id}">
+              <strong>${escapeText(template.label)}</strong>
+              <span>${escapeText(template.note)}</span>
+            </button>`
+        )
+        .join("");
+      const activeTemplate = templates.find((template) => template.id === state.selectedTemplate) || templates[0];
+      byId("activeTemplateLabel").textContent = activeTemplate.label;
+    }
+
+    function formatImportDate(date) {
+      return new Intl.DateTimeFormat("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+      }).format(date);
+    }
+
+    function applyTemplate() {
+      const resume = document.querySelector(".resume");
+      if (!resume) return;
+      templates.forEach((template) => resume.classList.remove(`template-${template.id}`));
+      resume.classList.add(`template-${state.selectedTemplate}`);
+    }
+
+    function setStep(step) {
+      state.currentStep = Math.min(4, Math.max(1, Number(step) || 1));
+      document.querySelectorAll(".page").forEach((page) => {
+        page.classList.toggle("active", Number(page.dataset.page) === state.currentStep);
+      });
+      document.querySelectorAll("#stepper .step").forEach((node) => {
+        node.classList.toggle("active", Number(node.dataset.step) === state.currentStep);
+      });
+      byId("backBtn").style.visibility = state.currentStep === 1 ? "hidden" : "visible";
+      byId("nextBtn").textContent = state.currentStep === 4 ? "Finish" : "Save & Next";
+      const formPanel = document.querySelector(".form-panel");
+      if (formPanel) {
+        formPanel.style.display = state.currentStep === 4 ? "none" : "";
+      }
+      saveState();
+    }
+
+    function renderSkills() {
+      byId("skillsWrap").innerHTML = state.skills.map((skill) => `<span class="chip">${escapeText(skill)}</span>`).join("");
+    }
+
+    function renderLanguages() {
+      byId("languagesWrap").innerHTML = state.languages
+        .map(({ name, level }) => {
+          const dots = Array.from({ length: 5 }, (_, idx) => `<span class="${idx < level ? "" : "off"}"></span>`).join("");
+          return `<div class="lang-row"><span>${escapeText(name)}</span><span class="dots">${dots}</span></div>`;
+        })
+        .join("");
+    }
+
+    function renderExperience() {
+      byId("experienceWrap").innerHTML = state.experience
+        .map(({ role, company, meta, points }) => {
+          const bullets = (points || []).map((point) => `<li>${escapeText(point)}</li>`).join("");
+          return `<div class="exp-item"><div class="exp-role">${escapeText(role)}</div><div class="exp-meta">${escapeText(company)}${company && meta ? " | " : ""}${escapeText(meta)}</div><ul>${bullets}</ul></div>`;
+        })
+        .join("");
+    }
+
+    function renderProjects() {
+      byId("projectsWrap").innerHTML = state.projects
+        .map(({ name, desc }) => `<p class="r-text"><strong>${escapeText(name)}</strong><br />${escapeText(desc)}</p>`)
+        .join("");
+    }
+
+    function renderEditors() {
+      byId("skillsEditor").innerHTML = state.skills
+        .map(
+          (skill, idx) => `
+            <div class="editor-row" data-index="${idx}">
+              <input data-type="skillName" data-index="${idx}" value="${escapeText(skill)}" placeholder="Skill" />
+              <button class="mini-btn danger" data-action="deleteSkill" data-index="${idx}" type="button">Delete</button>
+              <span></span>
+            </div>`
+        )
+        .join("");
+
+      byId("languagesEditor").innerHTML = state.languages
+        .map(
+          (language, idx) => `
+            <div class="editor-row two" data-index="${idx}">
+              <input data-type="languageName" data-index="${idx}" value="${escapeText(language.name)}" placeholder="Language" />
+              <input type="number" min="1" max="5" data-type="languageLevel" data-index="${idx}" value="${Number(language.level) || 1}" />
+              <button class="mini-btn danger" data-action="deleteLanguage" data-index="${idx}" type="button">Delete</button>
+              <span></span>
+            </div>`
+        )
+        .join("");
+
+      byId("experienceEditor").innerHTML = state.experience
+        .map(
+          (exp, idx) => `
+            <div class="editor-box" style="margin-bottom:8px;">
+              <div class="editor-row">
+                <input data-type="expRole" data-index="${idx}" value="${escapeText(exp.role)}" placeholder="Role" />
+                <button class="mini-btn danger" data-action="deleteExperience" data-index="${idx}" type="button">Delete</button>
+                <span></span>
+              </div>
+              <div class="editor-row" style="grid-template-columns:1fr;">
+                <input data-type="expCompany" data-index="${idx}" value="${escapeText(exp.company)}" placeholder="Company" />
+              </div>
+              <div class="editor-row" style="grid-template-columns:1fr;">
+                <input data-type="expMeta" data-index="${idx}" value="${escapeText(exp.meta)}" placeholder="Meta (date/location)" />
+              </div>
+              <div class="exp-points">
+                <label style="margin-bottom:4px;">Points (one per line)</label>
+                <textarea data-type="expPoints" data-index="${idx}" placeholder="Write one achievement per line">${escapeText((exp.points || []).join("\n"))}</textarea>
+              </div>
+            </div>`
+        )
+        .join("");
+
+      byId("projectsEditor").innerHTML = state.projects
+        .map(
+          (project, idx) => `
+            <div class="editor-box" style="margin-bottom:8px;">
+              <div class="editor-row">
+                <input data-type="projectName" data-index="${idx}" value="${escapeText(project.name)}" placeholder="Project name" />
+                <button class="mini-btn danger" data-action="deleteProject" data-index="${idx}" type="button">Delete</button>
+                <span></span>
+              </div>
+              <div class="editor-row" style="grid-template-columns:1fr;">
+                <textarea data-type="projectDesc" data-index="${idx}" placeholder="Description">${escapeText(project.desc)}</textarea>
+              </div>
+            </div>`
+        )
+        .join("");
+    }
+
+    function applyCustomization() {
+      root.style.setProperty("--accent-color", state.accentColor || baseState.accentColor);
+      root.style.setProperty("--resume-font", state.fontFamily || baseState.fontFamily);
+      root.style.setProperty("--resume-font-size", `${Number(state.baseFontSize || 12)}px`);
+      root.style.setProperty("--resume-line-height", String(state.lineHeight || 1.55));
+
+      document.querySelectorAll(".r-text, .exp-item ul").forEach((node) => {
+        node.style.fontSize = `var(--resume-font-size)`;
+        node.style.lineHeight = "var(--resume-line-height)";
+      });
+
+      byId("summarySection").style.display = state.showSummary ? "block" : "none";
+      byId("experienceSection").style.display = state.showExperience ? "block" : "none";
+      byId("projectsSection").style.display = state.showProjects ? "block" : "none";
+      byId("languagesSection").style.display = state.showLanguages ? "block" : "none";
+    }
+
+    function syncPreview() {
+      byId("pName").textContent = state.fullName || "Your Name";
+      byId("pTitle").textContent = state.jobTitle || "Job Title";
+      byId("pEmail").textContent = state.email || "";
+      byId("pPhone").textContent = state.phone || "";
+      byId("pLocation").textContent = state.location || "";
+      byId("pLinkedin").textContent = state.linkedin || "";
+      byId("pWebsite").textContent = state.website || "";
+      byId("pSummary").textContent = state.summary || "";
+
+      byId("formAvatar").src = state.photoSrc;
+      byId("resumeAvatar").src = state.photoSrc;
+      byId("formAvatar").style.visibility = state.showPhoto ? "visible" : "hidden";
+      byId("resumeAvatar").style.display = state.showPhoto ? "block" : "none";
+
+      renderSkills();
+      renderLanguages();
+      renderExperience();
+      renderProjects();
+      renderEditors();
+      renderSwatches();
+      renderTemplateModal();
+      renderImportStatus();
+      applyCustomization();
+      applyTemplate();
+      setStep(state.currentStep);
+      saveState();
+    }
+
+    function attachInput(id, key) {
+      byId(id).addEventListener("input", (event) => {
+        state[key] = event.target.value;
+        syncPreview();
+      });
+    }
+
+    ["fullName", "jobTitle", "email", "phone", "location", "linkedin", "website", "summary"].forEach((field) => attachInput(field, field));
+
+    function handleDynamicInput(event) {
+      const target = event.target;
+      const type = target.dataset.type;
+      const idx = Number(target.dataset.index);
+      if (!type || Number.isNaN(idx)) return;
+
+      if (type === "skillName") state.skills[idx] = target.value;
+      if (type === "languageName") state.languages[idx].name = target.value;
+      if (type === "languageLevel") state.languages[idx].level = Math.min(5, Math.max(1, Number(target.value) || 1));
+      if (type === "expRole") state.experience[idx].role = target.value;
+      if (type === "expCompany") state.experience[idx].company = target.value;
+      if (type === "expMeta") state.experience[idx].meta = target.value;
+      if (type === "expPoints") state.experience[idx].points = target.value.split("\n").map((p) => p.trim()).filter(Boolean);
+      if (type === "projectName") state.projects[idx].name = target.value;
+      if (type === "projectDesc") state.projects[idx].desc = target.value;
+      syncPreview();
+    }
+
+    function handleDeleteAction(event) {
+      const action = event.target.dataset.action;
+      const idx = Number(event.target.dataset.index);
+      if (!action || Number.isNaN(idx)) return;
+      if (action === "deleteSkill") state.skills.splice(idx, 1);
+      if (action === "deleteLanguage") state.languages.splice(idx, 1);
+      if (action === "deleteExperience") state.experience.splice(idx, 1);
+      if (action === "deleteProject") state.projects.splice(idx, 1);
+      syncPreview();
+    }
+
+    byId("skillsEditor").addEventListener("input", handleDynamicInput);
+    byId("languagesEditor").addEventListener("input", handleDynamicInput);
+    byId("experienceEditor").addEventListener("input", handleDynamicInput);
+    byId("projectsEditor").addEventListener("input", handleDynamicInput);
+    byId("skillsEditor").addEventListener("click", handleDeleteAction);
+    byId("languagesEditor").addEventListener("click", handleDeleteAction);
+    byId("experienceEditor").addEventListener("click", handleDeleteAction);
+    byId("projectsEditor").addEventListener("click", handleDeleteAction);
+
+    byId("addSkillBtn").addEventListener("click", () => {
+      state.skills.push("New Skill");
+      syncPreview();
+    });
+    byId("addLanguageBtn").addEventListener("click", () => {
+      state.languages.push({ name: "New Language", level: 3 });
+      syncPreview();
+    });
+    byId("addExperienceBtn").addEventListener("click", () => {
+      state.experience.push({ role: "New Role", company: "Company", meta: "Date | Location", points: ["Achievement"] });
+      syncPreview();
+    });
+    byId("addProjectBtn").addEventListener("click", () => {
+      state.projects.push({ name: "New Project", desc: "Project description" });
+      syncPreview();
+    });
+
+    byId("photoToggle").addEventListener("change", (event) => {
+      state.showPhoto = event.target.checked;
+      syncPreview();
+    });
+    byId("photoUpload").addEventListener("change", (event) => {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        state.photoSrc = reader.result;
+        state.showPhoto = true;
+        byId("photoToggle").checked = true;
+        syncPreview();
+      };
+      reader.readAsDataURL(file);
+    });
+
+    byId("stepper").addEventListener("click", (event) => {
+      const stepNode = event.target.closest("[data-step]");
+      if (!stepNode) return;
+      setStep(Number(stepNode.dataset.step));
+      saveState();
+    });
+    byId("backBtn").addEventListener("click", () => setStep(state.currentStep - 1));
+    byId("nextBtn").addEventListener("click", () => setStep(state.currentStep + 1));
+
+    byId("themeSwatches").addEventListener("click", (event) => {
+      const btn = event.target.closest("[data-accent]");
+      if (!btn) return;
+      state.accentColor = btn.dataset.accent;
+      syncPreview();
+    });
+    byId("fontSelect").addEventListener("change", (event) => {
+      state.fontFamily = event.target.value;
+      syncPreview();
+    });
+    byId("fontSizeRange").addEventListener("input", (event) => {
+      state.baseFontSize = Number(event.target.value);
+      syncPreview();
+    });
+    byId("lineHeightRange").addEventListener("input", (event) => {
+      state.lineHeight = Number(event.target.value);
+      syncPreview();
+    });
+
+    byId("toggleSummary").addEventListener("change", (event) => {
+      state.showSummary = event.target.checked;
+      syncPreview();
+    });
+    byId("toggleExperience").addEventListener("change", (event) => {
+      state.showExperience = event.target.checked;
+      syncPreview();
+    });
+    byId("toggleProjects").addEventListener("change", (event) => {
+      state.showProjects = event.target.checked;
+      syncPreview();
+    });
+    byId("toggleLanguages").addEventListener("change", (event) => {
+      state.showLanguages = event.target.checked;
+      syncPreview();
+    });
+
+    byId("openTemplateModalBtn").addEventListener("click", () => {
+      byId("templateModal").classList.add("open");
+      byId("templateModal").setAttribute("aria-hidden", "false");
+    });
+    byId("closeTemplateModalBtn").addEventListener("click", () => {
+      byId("templateModal").classList.remove("open");
+      byId("templateModal").setAttribute("aria-hidden", "true");
+    });
+    byId("templateModal").addEventListener("click", (event) => {
+      if (event.target === byId("templateModal")) {
+        byId("templateModal").classList.remove("open");
+        byId("templateModal").setAttribute("aria-hidden", "true");
+      }
+    });
+    byId("templateGrid").addEventListener("click", (event) => {
+      const templateBtn = event.target.closest("[data-template]");
+      if (!templateBtn) return;
+      state.selectedTemplate = templateBtn.dataset.template;
+      byId("templateModal").classList.remove("open");
+      byId("templateModal").setAttribute("aria-hidden", "true");
+      syncPreview();
+    });
+
+    function downloadJsonBackup() {
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "resume-data.json";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function importJsonBackup(file) {
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const parsed = JSON.parse(String(reader.result || "{}"));
+          if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+            alert("Invalid JSON format.");
+            return;
+          }
+
+          const merged = { ...baseState, ...parsed };
+          Object.keys(baseState).forEach((key) => {
+            state[key] = merged[key];
+          });
+          state.lastImportedAt = formatImportDate(new Date());
+
+          sanitizeState();
+          hydrateForm();
+          syncPreview();
+          alert("Resume data imported successfully.");
+        } catch (error) {
+          alert("Could not import this file. Please use a valid resume JSON backup.");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    byId("downloadJsonBtn").addEventListener("click", downloadJsonBackup);
+    byId("importJsonBtn").addEventListener("click", () => byId("importJsonInput").click());
+    byId("importJsonInput").addEventListener("change", (event) => {
+      const file = event.target.files && event.target.files[0];
+      importJsonBackup(file);
+      event.target.value = "";
+    });
+    byId("downloadTopBtn").addEventListener("click", () => setStep(4));
+    byId("printBtn").addEventListener("click", () => window.print());
+    byId("resetBtn").addEventListener("click", () => {
+      localStorage.removeItem("resumeBuilderState");
+      location.reload();
+    });
+
+    sanitizeState();
+    hydrateForm();
+    syncPreview();
+  </script>
+</body>
+</html>
+
